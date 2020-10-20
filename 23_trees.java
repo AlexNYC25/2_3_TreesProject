@@ -1,3 +1,9 @@
+/*
+    Project 5: 2-3 trees 
+    By Alexis Montes
+
+*/
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -5,16 +11,23 @@ import java.io.FileWriter;
 import java.util.Scanner;
 
 
+
 class tree_23{
 
+    /*
+        inner class for tree node to be used as actual tree node for 2-3 tree structure
+    */
     class treeNode {
+        // key values
         int key1;
         int key2;
+        // tree node values
         treeNode child1;
         treeNode child2;
         treeNode child3;
         treeNode father;
 
+        // constructor settting default values
         public treeNode(){
             // initial value of keys
             key1 = -1;
@@ -34,30 +47,70 @@ class tree_23{
             // handle null father
         */
         void printNode(treeNode TNode, BufferedWriter outFile){
+            String printString = "";
+
+            printString += "("+TNode.key1+","+TNode.key2+",";
+            if(TNode.child1 != null){
+                printString += TNode.child1.key1+",";
+            }
+            else{
+                printString += "null,";
+            }
+
+            if(TNode.child2 != null){
+                printString += TNode.child2.key1+",";
+            }
+            else{
+                printString += "null,";
+            }
+
+            if(TNode.child3 != null){
+                printString += TNode.child3.key1+",";
+            }
+            else{
+                printString += "null,";
+            }
+
+            if(TNode.father != null){
+                printString += TNode.father.key1 + ")\n";
+            }
+            else{
+                printString += "null)\n";
+            }
+
+            
+            try{
+                outFile.write(printString);
+            } catch( Exception e){
+                System.out.println(e.toString());
+            }
+/*
             try {
                 if(isLeaf(TNode)){
-                    if(TNode.father != null){
-                        outFile.write("("+TNode.key1+","+TNode.key2+","+"null,null,null,"+TNode.father.key1+")\n");   
-                    }else{
-                        outFile.write("("+TNode.key1+","+TNode.key2+","+"null,null,null,"+"null)\n");    
-    
-                    }
+
+                    outFile.write("("+TNode.key1+","+TNode.key2+","+"null,null,null,"+TNode.father.key1+")\n");
+                    return;  
+
                 }
                 if( TNode.child3 != null && !isLeaf(TNode)){
                     if(TNode.father != null){
-                        outFile.write("("+TNode.key1+","+TNode.key2+","+TNode.child1.key1+","+TNode.child2.key1+","+TNode.child3.key1+","+TNode.father.key1+")\n");    
+                        outFile.write("("+TNode.key1+","+TNode.key2+","+TNode.child1.key1+","+TNode.child2.key1+","+TNode.child3.key1+","+TNode.father.key1+")\n");
+                        return;    
     
                     }else{
                         outFile.write("("+TNode.key1+","+TNode.key2+","+TNode.child1.key1+","+TNode.child2.key1+","+TNode.child3.key1+","+"null)\n");    
+                        return;
     
                     }
                 }
                 if( !isLeaf(TNode) && TNode.child3 == null){
                     if(TNode.father != null){
-                        outFile.write("("+TNode.key1+","+TNode.key2+","+TNode.child1.key1+","+TNode.child2.key1+",null,"+TNode.father.key1+")\n");    
+                        outFile.write("("+TNode.key1+","+TNode.key2+","+TNode.child1.key1+","+TNode.child2.key1+",null,"+TNode.father.key1+")\n");   
+                        return; 
     
                     }else{
-                        outFile.write("("+TNode.key1+","+TNode.key2+","+TNode.child1.key1+","+TNode.child2.key1+",null,"+"null)\n");    
+                        outFile.write("("+TNode.key1+","+TNode.key2+","+TNode.child1.key1+","+TNode.child2.key1+",null,"+"null)\n"); 
+                        return;   
     
                     }
                    
@@ -65,8 +118,9 @@ class tree_23{
                 
             } catch (Exception e) {
                 //TODO: handle exception
-                System.out.println(e.toString());
+                System.out.println();
             }
+            */
             
         }
 
@@ -106,44 +160,50 @@ class tree_23{
             data2 = temp;
         }
 
+        // create new data nodes
         treeNode newNode1 = new treeNode();
         newNode1.key1 = data1;
-        newNode1.father = Root;
+        newNode1.father = this.Root;
         treeNode newNode2 = new treeNode();
         newNode2.key1 = data2;
-        newNode2.father = Root;
+        newNode2.father = this.Root;
 
         Root.child1 = newNode1;
         Root.child2 = newNode2;
         Root.key1 = data2;
 
 
-        Root.printNode(Root, deBugFile);
+        Root.printNode(this.Root, deBugFile);
         
     }
 
-    //
+    // pre order function to print data
     void preOrder(treeNode node, BufferedWriter out){
         if(node == null){
             return;
         }
 
-        node.printNode(node, out);
-
-        if(node.child1 != null){
-            preOrder(node.child1, out); 
+        if(isLeaf(node)){
+            node.printNode(node, out);
+            return;
         }
 
-        if(node.child2 != null){
+        if(node.child1 != null && node.child2 != null && node.child3 == null){
+            preOrder(node.child1, out);
+            node.printNode(node, out);
             preOrder(node.child2, out);
-
+            return;
         }
 
-        if(node.child3 != null){
+        if(node.child1 != null && node.child2 != null && node.child3 != null){
+            preOrder(node.child1, out);
+            node.printNode(node, out);
+            preOrder(node.child2, out);
             preOrder(node.child3, out);
-        }
+            return;
+        }       
 
-        return;
+
 
     }
 
@@ -151,7 +211,10 @@ class tree_23{
         finished needs testing
     */
     boolean isLeaf(treeNode node){
-        if(node.child1 != null && node.child2 != null && node.child3 != null){
+        /*
+            if the node has any children then it is not a leaf
+        */
+        if(node.child1 != null && node.child2 != null && node.child3 != null ){
             return false;
         }
         
@@ -170,89 +233,84 @@ class tree_23{
     }
 
     void makeNewRoot(treeNode s, treeNode sibling){
+        // new root 
         treeNode newRoot = new treeNode();
-        newRoot.child1 = s;
-        newRoot.child2 = sibling;
-        newRoot.key1 = findMinSubtree(newRoot.child1);
-        newRoot.key2 = findMinSubtree(newRoot.child2);
 
-        s.father = newRoot;
-        sibling.father = newRoot;
-        Root = newRoot;
+        if(s.key1 < sibling.key1){
+            s.father = newRoot;
+            sibling.father = newRoot;
+
+            newRoot.child1 = s;
+            newRoot.child2 = sibling;
+            newRoot.key1 = findMinSubtree(newRoot.child2);
+            newRoot.key2 = -1;
+        }
+        if(s.key1 >= sibling.key1){
+            s.father = newRoot;
+            sibling.father = newRoot;
+
+            newRoot.child1 = sibling;
+            newRoot.child2 = s;
+
+            newRoot.key1 = findMinSubtree(newRoot.child2);
+            newRoot.key2 = -1;
+        }
+
+        
+
+        
+        this.Root = newRoot;
 
     }
 
-    // TODO
+    // bubble sort helper function to sort array of treeNodes from smallest to largest
+    void bubbleTreeSort(treeNode[] tree){
+        int size = tree.length;
+
+        for (int i = 0; i < size; i++) 
+            for (int j = 0; j < size-i-1; j++) 
+                if (tree[j].key1 > tree[j+1].key1) 
+                { 
+                    // swap arr[j+1] and arr[j] 
+                    treeNode temp = tree[j]; 
+                    tree[j] = tree[j+1]; 
+                    tree[j+1] = temp; 
+                } 
+    }
+
+    // 
     void treeInsert(treeNode Spot, treeNode newNode){
 
         // Case 1 if spot has two children
         if(Spot.child1 != null && Spot.child2 != null && Spot.child3 == null){
-            treeNode tempLowest = null;
-            treeNode tempMiddle = null;
-            treeNode tempLast = null;
 
             treeNode[] tempArr = {Spot.child1, Spot.child2, newNode};
 
-            System.out.println("3 before " + Spot.child1.key1 + "," + Spot.child2.key1 + "," + newNode.key1 + ")");
+            // sort array
+            bubbleTreeSort(tempArr);
 
-            for(int y = 0; y < 3; y++){
-                // set up highest value
-                int lowestValue = Integer.MAX_VALUE;
-
-                // find the lowest value
-                for(int x = 0; x < tempArr.length; x++){
-                    if(tempArr[x] != null && tempArr[x].key1 < lowestValue){
-                        lowestValue = tempArr[x].key1;
-                    }
-                }
-
-                // find node with lowest value
-                treeNode found = null;
-
-                for(int x = 0; x < tempArr.length; x++){
-                    if(tempArr[x] != null && tempArr[x].key1 == lowestValue){
-                        found = tempArr[x];
-                        tempArr[x] = null;
-                    }
-                }
-
-
-                // set appopriate temp node
-                if(tempLowest == null){
-                    tempLowest = found;
-                }
-                else{
-                    if(tempMiddle == null){
-                        tempMiddle = found;
-                    }
-                    else{
-                        if(tempLast == null){
-                            tempLast = found;
-                        }
-                    }
-                }
-
-
-            }
-
-            
+            //System.out.println("3 before " + Spot.child1.key1 + "," + Spot.child2.key1 + "," + newNode.key1 + ")");
 
             /*
                 arrange nodes
             */
 
-            Spot.child1 = tempLowest;
-            Spot.child2 = tempMiddle;
-            Spot.child3 = tempLast;
+            Spot.child1 = tempArr[0];
+            Spot.child2 = tempArr[1];
+            Spot.child3 = tempArr[2];
+
+            Spot.child1.father = Spot;
+            Spot.child2.father = Spot;
+            Spot.child3.father = Spot;
 
             Spot.key1 = findMinSubtree(Spot.child2);
             Spot.key2 = findMinSubtree(Spot.child3);
 
-            System.out.println("3 after " + Spot.child1.key1 + "," + Spot.child2.key1 + "," + Spot.child3.key1 + ")");
+            //System.out.println("3 after " + Spot.child1.key1 + "," + Spot.child2.key1 + "," + Spot.child3.key1 + ")");
 
 
             if(Spot.father != null){
-                if(Spot == Spot.father.child2 || Spot == Spot.father.child3){
+                if(Spot.key1 == Spot.father.child2.key1 || Spot.key1 == Spot.father.child3.key1){
                     updateFather(Spot.father);
                 }
             }
@@ -263,54 +321,14 @@ class tree_23{
 
         // three children
         if(Spot.child1 != null && Spot.child2 != null && Spot.child3 != null){
-            treeNode tempLow = null;
-            treeNode tempMed1 = null;
-            treeNode tempMed2 = null;
-            treeNode tempHigh = null;
+            
 
             treeNode[] tempArr = {Spot.child1, Spot.child2, Spot.child3, newNode};
 
-            System.out.println("4 before " + Spot.child1.key1 + "," + Spot.child2.key1 + "," + Spot.child3.key1 + "," + newNode.key1 + ")");
+            // sort arr
+            bubbleTreeSort(tempArr);
 
-
-            for(int y = 0; y < 4; y++){
-                int lowestValue = Integer.MAX_VALUE;
-
-                for(int x = 0; x < tempArr.length; x++){
-                    if(tempArr[x] != null && tempArr[x].key1 < lowestValue){
-                        lowestValue = tempArr[x].key1;
-                    }
-                }
-
-                treeNode found = null;
-
-                for(int x = 0; x < tempArr.length; x++){
-                    if(tempArr[x] != null && tempArr[x].key1 == lowestValue){
-                        found = tempArr[x];
-                        tempArr[x] = null;
-                    }
-                }
-
-                if(tempLow == null){
-                    tempLow = found;
-                }
-                else{
-                    if(tempMed1 == null){
-                        tempMed1 = found;
-                    }
-                    else{
-                        if(tempMed2 == null){
-                            tempMed2 = found;
-                        }
-                        else{
-                            if(tempHigh == null){
-                                tempHigh = found;
-                            }
-                        }
-                    }
-                }
-            }
-
+            //System.out.println("4 before " + Spot.child1.key1 + "," + Spot.child2.key1 + "," + Spot.child3.key1 + "," + newNode.key1 + ")");
 
             /*
                 arrange node child1, child2, child3 and newNode
@@ -318,37 +336,47 @@ class tree_23{
             treeNode sibling = new treeNode();
             sibling.father = Spot.father;
 
-            Spot.child1 = tempLow;
-            Spot.child2 = tempMed1;
+            Spot.child1 = tempArr[0];
+            Spot.child2 = tempArr[1];
             Spot.child3 = null;
 
-            sibling.child1 = tempMed2;
-            sibling.child2 = tempHigh;
+            Spot.child1.father = Spot;
+            Spot.child2.father = Spot;
+
+            sibling.child1 = tempArr[2];
+            sibling.child2 = tempArr[3];
             sibling.child3 = null;
 
+            sibling.child1.father = sibling;
+            sibling.child2.father = sibling;
+
         
+            /*
+                set new key values
+            */  
             Spot.key1 = findMinSubtree(Spot.child2);
             Spot.key2 = -1;
 
             sibling.key1 = findMinSubtree(sibling.child2);
             sibling.key2 = -1;
 
-            System.out.println("4 after " + Spot.child1.key1 + "," + Spot.child2.key1 + "," + sibling.child1.key1 + "," + sibling.child2.key2 + ")");
+            //System.out.println("4 after " + Spot.child1.key1 + "," + Spot.child2.key1 + "," + sibling.child1.key1 + "," + sibling.child2.key1 + ")");
 
             if(Spot.father != null){
-                if(Spot == Spot.father.child2 || Spot == Spot.father.child3){
+                if(Spot.key1 == Spot.father.child2.key1 || Spot.key1 == Spot.father.child3.key1){
                     updateFather(Spot.father);
                 }
 
             }
 
             if(sibling.father != null){
-                if(sibling == sibling.father.child2 || sibling == sibling.father.child3 ){
+                if(sibling.key1 == sibling.father.child2.key1 || sibling.key1 == sibling.father.child3.key1 ){
                     updateFather(sibling.father);
                 }
             }
 
-            if(Spot == Root){
+            if(Spot.key1 == Root.key1){
+                // pass old root and new sibling
                 makeNewRoot(Spot, sibling);
             }
             else{
@@ -362,16 +390,8 @@ class tree_23{
 
     treeNode findSpot(treeNode Spot, int data){
 
-        
-        
-
         if(isLeaf(Spot.child1)){
             return Spot;
-        }
-       
-        if(isLeaf(Spot)){
-            System.out.println("You are at leaf level, you are too far down the tree");
-            return null;
         }
 
         if(!isLeaf(Spot)){
@@ -391,12 +411,24 @@ class tree_23{
                 return findSpot(Spot.child3, data);
             }
 
-        }else{
+        }
+
+
+
+       
+        if(isLeaf(Spot)){
+            System.out.println("You are at leaf level, you are too far down the tree");
             return null;
         }
+
+
+
         return null;
     }
 
+    /*
+        function to update key values
+    */
     void updateFather(treeNode fatherNode){
         if(fatherNode == null){
             return;
@@ -405,7 +437,10 @@ class tree_23{
         fatherNode.key1 = findMinSubtree(fatherNode.child2);
         fatherNode.key2 = findMinSubtree(fatherNode.child3);
 
-        updateFather(fatherNode.father);
+        if(fatherNode.father != null){
+            updateFather(fatherNode.father);
+        }
+        
 
     }
 
@@ -428,7 +463,7 @@ class tree_23{
 
 }
 
-class project3{
+class project5{
     public static void main(String[] args){
         
 
@@ -438,25 +473,30 @@ class project3{
             debugFile <- args[1]
             treeFile <- args[2]
         */
+        // txt file objects
         Scanner inFile = null;
         BufferedWriter debugFile = null;
         BufferedWriter treeFile = null;
     
+        // attempting to open files
         try{
             debugFile = new BufferedWriter( new FileWriter(args[1]));
             treeFile = new BufferedWriter(new FileWriter(args[2]));
             inFile = new Scanner( new BufferedReader(new FileReader(args[0])));
     
         } catch(Exception e){
-            System.out.println(e.toString());
+            //System.out.println(e.toString());
         }
     
     
         myTree.initialTree(inFile, debugFile);
     
+        // while integers are still in data file
         while(inFile.hasNext()){
+            // get actual data int
             int data = inFile.nextInt();
     
+            // find the best spot for insertion
             tree_23.treeNode spot = myTree.findSpot(myTree.Root, data);
     
             if(spot == null){
@@ -472,6 +512,7 @@ class project3{
                 
             }
     
+            // create new node with appropiate values
             tree_23.treeNode newNode = myTree.new treeNode();
             newNode.key1 = data;
             newNode.key2 = -1;
@@ -480,12 +521,14 @@ class project3{
             newNode.child3 = null;
             newNode.father = null;
             
+            // insert value
             if(spot != null){
                 myTree.treeInsert(spot, newNode);
+                //myTree.preOrder(myTree.Root, debugFile);
             }
             
     
-            myTree.preOrder(myTree.Root, debugFile);
+            
     
         }
     
